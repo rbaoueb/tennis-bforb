@@ -24,7 +24,7 @@ If the player with advantage wins the ball he wins the game
 If the player without advantage wins the ball they are back at “deuce”.
 
 ## Report
-The javadoc report of the library can be reachable through this [link](https://rbaoueb.github.io/tennis-bforb/)
+The javadoc report of the project can be reachable through this [link](https://rbaoueb.github.io/tennis-bforb/)
 
 
 ## Installation
