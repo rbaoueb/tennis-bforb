@@ -1,6 +1,7 @@
 package com.bforb.tennis;
 
 import com.bforb.tennis.exception.GameAlreadyFinishedException;
+import com.bforb.tennis.exception.GenericGameException;
 import com.bforb.tennis.exception.PlayerNamingException;
 import com.bforb.tennis.model.GameStatusEnum;
 import com.bforb.tennis.model.ScoreEnum;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.internal.matchers.Null;
 
 import java.util.stream.Stream;
 
@@ -103,6 +105,13 @@ class TennisServiceTest {
         assertNotNull(gameAlreadyEndException.getPlayerName(), scoringPlayer);
     }
 
+    @ParameterizedTest(name = "score {0} | {1} won the ball -> illegal state")
+    @ArgumentsSource(IrrelevantCaseData.class)
+    @DisplayName("irrelevant case for null player & game status")
+    void irrelevant_case_test(TennisGame startingScore, String scoringPlayer) {
+        assertThrows(GenericGameException.class, () ->  TennisServiceImpl.getInstance().playPoint(startingScore, scoringPlayer));
+    }
+
 
     static class BallAfterSimpleScoreData implements ArgumentsProvider {
         @Override
@@ -119,7 +128,9 @@ class TennisServiceTest {
                     Arguments.of(TennisGame.init(ScoreEnum.FIFTEEN, ScoreEnum.FIFTEEN, GameStatusEnum.STARTED), "A", TennisGame.init(ScoreEnum.THIRTY, ScoreEnum.FIFTEEN, GameStatusEnum.STARTED)),
                     Arguments.of(TennisGame.init(ScoreEnum.FIFTEEN, ScoreEnum.FIFTEEN, GameStatusEnum.STARTED), "B", TennisGame.init(ScoreEnum.FIFTEEN, ScoreEnum.THIRTY, GameStatusEnum.STARTED)),
                     Arguments.of(TennisGame.init(ScoreEnum.ZERO, ScoreEnum.THIRTY, GameStatusEnum.STARTED), "A", TennisGame.init(ScoreEnum.FIFTEEN, ScoreEnum.THIRTY, GameStatusEnum.STARTED)),
-                    Arguments.of(TennisGame.init(ScoreEnum.ZERO, ScoreEnum.THIRTY, GameStatusEnum.STARTED), "B", TennisGame.init(ScoreEnum.ZERO, ScoreEnum.FORTY, GameStatusEnum.STARTED))
+                    Arguments.of(TennisGame.init(ScoreEnum.ZERO, ScoreEnum.THIRTY, GameStatusEnum.STARTED), "B", TennisGame.init(ScoreEnum.ZERO, ScoreEnum.FORTY, GameStatusEnum.STARTED)),
+                    Arguments.of(TennisGame.init(ScoreEnum.FORTY, ScoreEnum.FIFTEEN, GameStatusEnum.STARTED), "B", TennisGame.init(ScoreEnum.FORTY, ScoreEnum.THIRTY, GameStatusEnum.STARTED)),
+                    Arguments.of(TennisGame.init(ScoreEnum.FIFTEEN, ScoreEnum.FORTY, GameStatusEnum.STARTED), "A", TennisGame.init(ScoreEnum.THIRTY, ScoreEnum.FORTY, GameStatusEnum.STARTED))
 
             );
         }
@@ -187,6 +198,17 @@ class TennisServiceTest {
         public Stream<Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED), "C", TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED))
+            );
+        }
+    }
+    static class IrrelevantCaseData implements ArgumentsProvider {
+        @Override
+        public Stream<Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                    Arguments.of(null, "A", TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED)),
+                    Arguments.of(null, "A", TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED)),
+                    Arguments.of(null, "B", TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED)),
+                    Arguments.of(TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, null), "B", TennisGame.init(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED))
             );
         }
     }

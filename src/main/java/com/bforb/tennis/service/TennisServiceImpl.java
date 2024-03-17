@@ -2,6 +2,7 @@ package com.bforb.tennis.service;
 
 
 import com.bforb.tennis.exception.GameAlreadyFinishedException;
+import com.bforb.tennis.exception.GenericGameException;
 import com.bforb.tennis.exception.PlayerNamingException;
 import com.bforb.tennis.function.GameInitializer;
 import com.bforb.tennis.function.ScoreEvaluator;
@@ -11,6 +12,8 @@ import com.bforb.tennis.model.ScoreEnum;
 import com.bforb.tennis.model.TennisGame;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
 
 public final class TennisServiceImpl implements TennisService {
 
@@ -22,6 +25,8 @@ public final class TennisServiceImpl implements TennisService {
 
 
     private static final ScoreEvaluator<TennisGame> evaluator = (winningPlayer, currentScore) -> {
+        Optional.ofNullable(currentScore).orElseThrow(() -> new GenericGameException("game shouldn't be null!"));
+        Optional.ofNullable(currentScore.gameStatus()).orElseThrow(() -> new GenericGameException("game status shouldn't be null!"));
         if(winningPlayer == PlayerEnum.A) {
             return switch (currentScore.gameStatus()) {
                 case STARTED -> {

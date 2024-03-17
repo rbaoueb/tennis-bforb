@@ -57,7 +57,8 @@ class DisplayServiceTests {
                     Arguments.of(ScoreEnum.FORTY, ScoreEnum.FORTY, GameStatusEnum.ADVANTAGE_SECOND_PLAYER),
                     Arguments.of(ScoreEnum.FORTY, ScoreEnum.FORTY, GameStatusEnum.DEUCE),
                     Arguments.of(ScoreEnum.WIN, ScoreEnum.FIFTEEN, GameStatusEnum.FINISHED),
-                    Arguments.of(ScoreEnum.THIRTY, ScoreEnum.WIN, GameStatusEnum.FINISHED)
+                    Arguments.of(ScoreEnum.THIRTY, ScoreEnum.WIN, GameStatusEnum.FINISHED),
+                    Arguments.of(ScoreEnum.THIRTY, ScoreEnum.WIN, null)
             );
         }
     }
